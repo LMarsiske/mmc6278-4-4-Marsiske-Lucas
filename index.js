@@ -18,6 +18,8 @@ let convertedWordToGuess = "";
 let previousWord = "";
 let incorrectLetters = [];
 let remainingGuesses = 10;
+let wins = 0;
+let losses = 0;
 
 const selectWord = () => {
   let rand = Math.floor(Math.random() * 11);
@@ -57,15 +59,43 @@ const handleKeyUp = (e) => {
     remainingGuesses--;
   }
 
+  updateGameState();
   updateDOM();
 };
 
 const isAlpha = (char) => /^[a-z]$/i.test(char);
 
+const updateGameState = () => {
+  let gameOver = false;
+  if (!convertedWordToGuess.includes("_")) {
+    wins++;
+    gameOver = true;
+  }
+
+  if (remainingGuesses === 0) {
+    losses++;
+    gameOver = true;
+  }
+
+  if (gameOver) {
+    resetGame();
+    selectWord();
+  }
+};
+
+const resetGame = () => {
+  previousWord = wordToGuess;
+  incorrectLetters = [];
+  remainingGuesses = 10;
+};
+
 const updateDOM = () => {
   document.getElementById("word-to-guess").innerHTML = convertedWordToGuess;
   document.getElementById("incorrect-letters").innerHTML = incorrectLetters;
   document.getElementById("remaining-guesses").innerHTML = remainingGuesses;
+  document.getElementById("wins").innerHTML = wins;
+  document.getElementById("losses").innerHTML = losses;
+  document.getElementById("previous-word").innerHTML = previousWord;
 };
 
 document.addEventListener("keyup", handleKeyUp);
