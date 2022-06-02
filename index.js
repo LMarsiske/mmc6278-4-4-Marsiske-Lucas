@@ -30,10 +30,44 @@ const selectWord = () => {
   updateDOM();
 };
 
+const handleKeyUp = (e) => {
+  let userInput = e.key;
+  if (incorrectLetters.includes(userInput) || !isAlpha(userInput)) {
+    console.log("returning");
+    return;
+  }
+
+  if (wordToGuess.includes(userInput)) {
+    console.log("word contains letter");
+    let matchingIndexes = [];
+    for (let i = 0; i < wordToGuessArr.length; i++) {
+      if (wordToGuessArr[i] === userInput) {
+        matchingIndexes.push(i);
+      }
+    }
+    matchingIndexes.forEach((idx) => {
+      convertedWordToGuess = `${convertedWordToGuess.substring(
+        0,
+        idx
+      )}${userInput}${convertedWordToGuess.substring(idx + 1)}`;
+    });
+  } else {
+    console.log("word does not contain letter");
+    incorrectLetters.push(userInput);
+    remainingGuesses--;
+  }
+
+  updateDOM();
+};
+
+const isAlpha = (char) => /^[a-z]$/i.test(char);
+
 const updateDOM = () => {
   document.getElementById("word-to-guess").innerHTML = convertedWordToGuess;
   document.getElementById("incorrect-letters").innerHTML = incorrectLetters;
   document.getElementById("remaining-guesses").innerHTML = remainingGuesses;
 };
+
+document.addEventListener("keyup", handleKeyUp);
 
 document.onload = selectWord();
